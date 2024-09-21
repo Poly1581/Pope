@@ -10,3 +10,24 @@
 // Step 3: Add an event listener to the sendBtn to trigger sendMessage() when clicked
 
 // Step 4: Add an event listener to the inputField to allow the "Enter" key to send the message 
+
+const messagesContainer = document.getElementById("messages");
+const inputField = document.getElementById("user-input");
+const sendBtn = document.getElementById("send-btn");
+
+function sendMessage() {
+	const prompt = inputField.value;
+	if(prompt.trim() == "") {
+		window.alert("Prompt is empty.");
+		return;
+	}
+	messagesContainer.textContent += prompt;
+	inputField.textContent = "";
+}
+
+sendBtn.addEventListener("click", sendMessage);
+inputField.addEventListener("keypress", (press) => {
+	if(press.key == "Enter") {
+		sendMessage;
+	}
+});
