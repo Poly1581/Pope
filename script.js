@@ -9,4 +9,4 @@
 
 // Step 3: Add an event listener to the sendBtn to trigger sendMessage() when clicked
 
-// Step 4: Add an event listener to the inputField to allow the "Enter" key to send the message
+// Step 4: Add an event listener to the inputField to allow the "Enter" key to send the message 
