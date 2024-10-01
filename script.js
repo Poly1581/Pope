@@ -1,34 +1,41 @@
-// Step 1: Add 3 constant variables inputField, sendBtn, and messagesContainer
-// These variables should retrieve elements by their IDs from the HTML
-
-// Step 2: Add a sendMessage() function to handle sending messages
-//  - Retrieve the user input from the input field and remove whitespace
-//  - Check if the input is empty, and if so, display an alert
-//  - If not empty, create a new message element and display it in the chat window
-//  - Clear the input field after the message is displayed
-
-// Step 3: Add an event listener to the sendBtn to trigger sendMessage() when clicked
-
-// Step 4: Add an event listener to the inputField to allow the "Enter" key to send the message 
-
 const messagesContainer = document.getElementById("messages");
 const inputField = document.getElementById("user-input");
 const sendBtn = document.getElementById("send-btn");
 
-function sendMessage() {
+async function sendMessage(event) {
+	//Avoid submitting form
+	event.preventDefault();
+	//Get user submission
 	const prompt = inputField.value;
+	//Check if empty
 	if(prompt.trim() == "") {
-		window.alert("Prompt is empty.");
+		//Warn user of empty prompt
+		alert("Prompt is empty");
 		return;
 	}
-	messagesContainer.textContent += prompt;
-	inputField.textContent = "";
+	//Add prompt to messages container
+	messagesContainer.innerHTML += `User: ${prompt}<br>`;
+	//Reset input field
+	inputField.value = "";
+	//Send post request and await response
+	const response = await fetch("/chat", {
+		method: "POST",
+		headers: {"Content-Type": "application/json"},
+		body: JSON.stringify({
+			message: prompt
+		})
+	});
+	//Get response message
+	const {message} = await response.json();
+	//Log message
+	console.log(response);
+	//Add response message to messages container
+	messagesContainer.innerHTML += `Bot: ${message}<br>`;
 }
 
 sendBtn.addEventListener("click", sendMessage);
 inputField.addEventListener("keypress", (event) => {
-	if(press.key == "Enter") {
-		event.preventDefault();
+	if(event.key === "Enter") {
 		sendBtn.click();
 	}
 });
