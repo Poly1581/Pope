@@ -26,8 +26,9 @@ function sendMessage() {
 }
 
 sendBtn.addEventListener("click", sendMessage);
-inputField.addEventListener("keypress", (press) => {
+inputField.addEventListener("keypress", (event) => {
 	if(press.key == "Enter") {
-		sendMessage;
+		event.preventDefault();
+		sendBtn.click();
 	}
 });
