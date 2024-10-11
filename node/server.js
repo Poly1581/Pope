@@ -33,26 +33,22 @@ app.get('/', (req, res) => {
 
 //POST route for chat responses
 app.post('/chat', async (req, res) => {
-	const {userMessage, timestamp} = req.body;
+	const {messages, timestamp} = req.body;
     try{
+    	console.log(`USER: ${messages[messages.length - 1].content}`);
     	const request = {
 	    	model: "gpt-4o-mini",
-	    	messages: [
-	    		{
-	    			role: "user",
-	    			content: userMessage
-	    		}
-	    	],
+	    	messages: messages,
 	    	max_tokens: 200
 	    }
 	    const response = await openai.chat.completions.create(request);
 	    const botMessage = response.choices[0].message.content.trim();
 	    const interaction = new Interaction({
-	    	userInput: userMessage,
+	    	userInput: messages[messages.length-1].content,
 	    	botResponse: botMessage,
 	    	timestamp: timestamp
 	    });
-	    await interaction.save();
+	    // await interaction.save();
 	    res.json({
 	    	botMessage: botMessage
 	    });
@@ -70,7 +66,7 @@ app.post("/log-event", async (req, res) => {
 			elementName: elementName,
 			timestamp: timestamp
 		});
-		await event.save();
+		// await event.save();
 		res.sendStatus(200);
 	} catch (error) {
 		console.log(`Error saving event log: ${error}`);

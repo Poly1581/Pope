@@ -43,6 +43,7 @@ h1 {
   border-radius: 4px;
   margin-bottom: 15px;
   padding: 10px;
+  overflow-y:auto
 }
 
 /* Input styling */
