@@ -1,4 +1,4 @@
-let inputField = document.getElementById("user-input");
+let inputField = 	document.getElementById("user-input");
 let sendBtn = document.getElementById("send-btn");
 
 function loggerRequest(type, name) {
