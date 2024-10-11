@@ -29,9 +29,44 @@ function getUserMessage() {
 	return content;
 }
 
+function addMenu() {
+	const menuContainer = document.createElement("div");
+	menuContainer.className = "menu";
+	const verify = document.createElement("div");
+	verify.className = "verify";
+	verify.innerText = "verify";
+	menuContainer.appendChild(verify);
+	const explain = document.createElement("div");
+	explain.className = "explain";
+	explain.innerText = "explain";
+	menuContainer.appendChild(explain);
+	this.showingMenu = true;
+	this.appendChild(menuContainer);
+}
+
+function removeMenu() {
+	const menu = this.querySelector(".menu");
+	this.showingMenu = false;
+	this.removeChild(menu);
+}
+
+function toggleMenu() {
+	if(!this.showingMenu) {
+		this.addMenu();
+	} else {
+		this.removeMenu();
+	}
+}
+
 function addMessageDiv(content) {
 	const messageDiv = document.createElement("div");
 	messageDiv.innerText = content;
+	if(content.slice(0,3) == "Bot") {
+		messageDiv.toggleMenu = toggleMenu;
+		messageDiv.addMenu = addMenu;
+		messageDiv.removeMenu = removeMenu;
+		messageDiv.onclick = messageDiv.toggleMenu;
+	}
 	messagesContainer.appendChild(messageDiv);
 	const lineBreak = document.createElement("br");
 	messagesContainer.appendChild(lineBreak);

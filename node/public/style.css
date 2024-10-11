@@ -71,3 +71,14 @@ h1 {
 #send-btn:hover {
   background-color: #0056b3;
 }
+
+.menu {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.verify, .explain {
+  width: 40%;
+  text-align: center;
+}
