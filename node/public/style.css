@@ -56,7 +56,7 @@ h1 {
 }
 
 /* Button styling */
-#send-btn, #link-to-chatbot{
+#send-btn, #link-to-chatbot {
   width: 60px;
   padding: 10px;
   background-color: #007bff;
@@ -81,4 +81,7 @@ h1 {
 .verify, .explain {
   width: 40%;
   text-align: center;
+  background-color: #007bff;
+  color: white;
+  border: none;
 }

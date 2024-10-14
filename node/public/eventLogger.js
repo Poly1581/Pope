@@ -1,8 +1,5 @@
-let inputField = 	document.getElementById("user-input");
-let sendBtn = document.getElementById("send-btn");
-
 function loggerRequest(type, name) {
-	return {
+	return fetch("/log-event", {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json"
@@ -12,12 +9,12 @@ function loggerRequest(type, name) {
 			elementName: name,
 			timestamp: new Date()
 		})
-	}
+	});
 }
 
 async function logEvent(type, name) {
 	try {
-		await fetch(loggerRequest(type, name));
+		await loggerRequest();
 	} catch (error) {
 		console.log(`Error logging interaction: ${error}`);
 	}
