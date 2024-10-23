@@ -1,3 +1,6 @@
+const userInput = document.getElementById("user-input");
+const chatContainer = document.getElementById("chat-container");
+const stickyContainer = document.getElementById("sticky-container");
 const messagesContainer = document.getElementById("messages");
 const inputField = document.getElementById("user-input");
 const sendBtn = document.getElementById("send-btn");
@@ -41,7 +44,7 @@ async function logEvent(event, element) {
 }
 
 async function getDB() {
-	const response await fetch("/get-db" {
+	const response = await fetch("/get-db", {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json"
@@ -52,6 +55,68 @@ async function getDB() {
 	});
 	console.log(response.documents);
 }
+
+function makeDiv(content, className) {
+	const temp = document.createElement("div");
+	temp.innerText = content;
+	temp.className = className;
+	return temp;
+}
+
+//ADD ONCLICK
+function makeClickableDiv(content, className, onclick) {
+	temp = makeDiv(content, className);
+	temp.onclick = onclick;
+	return temp;
+}
+
+function makeHeader(contextDiv, body) {
+	//ADD ONCLICK TO TRAVERSE UP TREE AND DELETE SELF
+	const close = makeClickableDiv("x", "close", event => {
+		event.stopPropagation();
+		let element = event.target;
+		while(!element.classList.contains("sticky")) {
+			console.log(`CURRENT: ${element}`);
+			element = element.parentElement;
+		}
+		console.log(`FINAL: ${element}`);
+		element.remove();
+	});
+
+	//ADD ONCLICK TO TOGGLE HIGHLIGHT OF CONTEXT DIV
+	const context = makeClickableDiv("show context", "context", event => {
+		event.stopPropagation();
+		contextDiv.classList.toggle("highlight");
+	});
+
+	//ADD ONCLICK TO MINIMIZE EXPLANATION
+	const minimize = makeClickableDiv("-", "minimize", event => {
+		event.stopPropagation();
+		body.classList.toggle("minimized");
+	});
+
+	const header = makeDiv("", "stickyHeader");
+	header.appendChild(close);
+	header.appendChild(context);
+	header.appendChild(minimize);
+
+	return header;
+}
+
+function makeSticky(context, content) {
+	//SET WIDTH AND HEIGHT
+	const body = makeDiv(content, "stickyBody");
+	const header = makeHeader(context, body);
+	const sticky = makeDiv("", "sticky");
+	sticky.appendChild(header);
+	sticky.appendChild(body);
+	sticky.classList.add("draggable");
+	stickyContainer.appendChild(sticky);
+}
+
+
+makeSticky(document.createElement("div"), "this is a test");	
+makeSticky(document.createElement("div"), "this is a test");	
 
 if(form) {
 	form.addEventListener("submit", submitPrompt);
@@ -80,3 +145,28 @@ if(sendBtn) {
 	});
 }
 
+function dragMoveListener (event) {
+	var target = event.target
+	// keep the dragged position in the data-x/data-y attributes
+	var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
+	var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
+
+	// translate the element
+	target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
+
+	// update the posiion attributes
+	target.setAttribute('data-x', x)
+	target.setAttribute('data-y', y)
+}
+
+interact('.draggable').draggable({
+	modifiers: [
+		interact.modifiers.restrictRect({
+			restriction: 'parent',
+			endOnly: false
+		})
+	],
+	listeners: {
+		move: dragMoveListener
+	}
+})
