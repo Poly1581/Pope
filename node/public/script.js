@@ -99,10 +99,12 @@ function makeHeader(contextDiv, body) {
 		event.stopPropagation();
 		let element = event.target;
 		while(!element.classList.contains("sticky")) {
-			console.log(`CURRENT: ${element}`);
 			element = element.parentElement;
 		}
-		console.log(`FINAL: ${element}`);
+		if(previousHighlightedMessage == contextDiv) {
+			contextDiv.classList.toggle("highlight");
+			previousHighlightedMessage = null;
+		}
 		element.remove();
 	});
 
