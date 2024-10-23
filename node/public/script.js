@@ -8,7 +8,9 @@ const form = document.getElementById("chat-form");
 
 window.marked.use({
 	breaks: true
-})
+});
+
+let previousHighlightedMessage = null;
 
 function getUserMessage() {
 	const prompt = inputField.value;
@@ -107,7 +109,11 @@ function makeHeader(contextDiv, body) {
 	//ADD ONCLICK TO TOGGLE HIGHLIGHT OF CONTEXT DIV
 	const context = makeClickableDiv("show context", "context", event => {
 		event.stopPropagation();
+		if(previousHighlightedMessage) {
+			previousHighlightedMessage.classList.toggle("highlight");
+		}
 		contextDiv.classList.toggle("highlight");
+		previousHighlightedMessage = contextDiv;
 	});
 
 	//ADD ONCLICK TO MINIMIZE EXPLANATION
@@ -138,7 +144,8 @@ function makeSticky(context, content) {
 
 const test = addMessage("Test: this is a test");
 makeSticky(test, "this is a test");	
-makeSticky(document.createElement("div"), "this is a test");	
+const anotherTest = addMessage("Test: this is another test");
+makeSticky(anotherTest, "this is a test");	
 
 if(form) {
 	form.addEventListener("submit", submitPrompt);
