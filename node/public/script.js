@@ -22,6 +22,7 @@ function addMessage(content) {
 	messageDiv.innerHTML = content;
 	messagesContainer.appendChild(messageDiv);
 	messagesContainer.appendChild(document.createElement("br"));
+	return messageDiv;
 }
 
 async function submitPrompt(event) {
@@ -42,8 +43,9 @@ async function submitPrompt(event) {
 		})
 	});
 	const {botMessage} = await response.json();
-	addMessage(texme.render(`Assistant: ${botMessage}`));
+	const botMessageDiv = addMessage(texme.render(`Assistant: ${botMessage}`));
 	MathJax.typeset();
+	//TRAVERSE BOTMESSAGEDIV CHILDREN AND ADD ONCLICK TO SHOW MENU
 }
 
 async function logEvent(event, element) {
@@ -88,6 +90,8 @@ function makeClickableDiv(content, className, onclick) {
 }
 
 function makeHeader(contextDiv, body) {
+	const header = makeDiv("", "stickyHeader");
+
 	//ADD ONCLICK TO TRAVERSE UP TREE AND DELETE SELF
 	const close = makeClickableDiv("x", "close", event => {
 		event.stopPropagation();
@@ -109,10 +113,10 @@ function makeHeader(contextDiv, body) {
 	//ADD ONCLICK TO MINIMIZE EXPLANATION
 	const minimize = makeClickableDiv("-", "minimize", event => {
 		event.stopPropagation();
+		header.classList.toggle("minimized");
 		body.classList.toggle("minimized");
 	});
 
-	const header = makeDiv("", "stickyHeader");
 	header.appendChild(close);
 	header.appendChild(context);
 	header.appendChild(minimize);
@@ -132,7 +136,8 @@ function makeSticky(context, content) {
 }
 
 
-makeSticky(document.createElement("div"), "this is a test");	
+const test = addMessage("Test: this is a test");
+makeSticky(test, "this is a test");	
 makeSticky(document.createElement("div"), "this is a test");	
 
 if(form) {
