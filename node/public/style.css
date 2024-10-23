@@ -4,6 +4,7 @@
   --radius: 4px;
   --indent: 5%;
   --padding: 1%;
+  --margin: 1%;
 }
 
 
@@ -156,4 +157,8 @@ h1 {
 
 ul, ol {
   padding-inline-start: var(--indent);
+}
+
+.message p {
+  margin: var(--margin);
 }

@@ -6,6 +6,10 @@ const inputField = document.getElementById("user-input");
 const sendBtn = document.getElementById("send-btn");
 const form = document.getElementById("chat-form");
 
+window.marked.use({
+	breaks: true
+})
+
 function getUserMessage() {
 	const prompt = inputField.value;
 	inputField.value = "";
@@ -23,7 +27,6 @@ function addMessage(content) {
 async function submitPrompt(event) {
 	event.preventDefault();
 	event.stopPropagation();
-	console.log("SUBMITTING PROMPT");
 	const prompt = getUserMessage();
 	if(!prompt) {
 		alert("Prompt is empty");
@@ -55,7 +58,6 @@ async function logEvent(event, element) {
 			timestamp: new Date()
 		})
 	});
-	console.log(response);
 }
 
 async function getDB() {
