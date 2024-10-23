@@ -111,7 +111,7 @@ function makeHeader(contextDiv, body) {
 	//ADD ONCLICK TO TOGGLE HIGHLIGHT OF CONTEXT DIV
 	const context = makeClickableDiv("show context", "context", event => {
 		event.stopPropagation();
-		if(previousHighlightedMessage) {
+		if(previousHighlightedMessage && previousHighlightedMessage != contextDiv) {
 			previousHighlightedMessage.classList.toggle("highlight");
 		}
 		contextDiv.classList.toggle("highlight");
