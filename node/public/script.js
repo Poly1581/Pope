@@ -6,15 +6,30 @@ const inputField = document.getElementById("user-input");
 const sendBtn = document.getElementById("send-btn");
 const form = document.getElementById("chat-form");
 
+function getUserMessage() {
+	const prompt = inputField.value;
+	inputField.value = "";
+	return prompt;
+}
+
+function addMessage(content) {
+	const messageDiv = document.createElement("div");
+	messageDiv.classList.add("message");
+	messageDiv.innerHTML = content;
+	messagesContainer.appendChild(messageDiv);
+	messagesContainer.appendChild(document.createElement("br"));
+}
+
 async function submitPrompt(event) {
 	event.preventDefault();
-	const prompt = inputField.value;
+	event.stopPropagation();
+	console.log("SUBMITTING PROMPT");
+	const prompt = getUserMessage();
 	if(!prompt) {
 		alert("Prompt is empty");
 		return;
 	}
-	messagesContainer.innerHTML += `User: ${prompt}<br>`;
-	inputField.value = "";
+	addMessage(`User: ${prompt}`);
 	const response = await fetch("/chat", {
 		method: "POST",
 		headers: {"Content-Type": "application/json"},
@@ -24,8 +39,8 @@ async function submitPrompt(event) {
 		})
 	});
 	const {botMessage} = await response.json();
-	console.log(botMessage);
-	messagesContainer.innerHTML += `Bot: ${botMessage}<br>`;
+	addMessage(texme.render(`Assistant: ${botMessage}`));
+	MathJax.typeset();
 }
 
 async function logEvent(event, element) {

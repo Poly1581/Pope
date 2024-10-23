@@ -43,10 +43,11 @@ app.post('/chat', async (req, res) => {
 	    			content: userMessage
 	    		}
 	    	],
-	    	max_tokens: 200
+	    	max_tokens: 500
 	    }
 	    const response = await openai.chat.completions.create(request);
 	    const botMessage = response.choices[0].message.content.trim();
+	    console.log(botMessage);
 	    const interaction = new Interaction({
 	    	userInput: userMessage,
 	    	botResponse: botMessage,
