@@ -1,5 +1,6 @@
 :root {
   --violet: #c3b3e6;
+  --chartreuse: #D4EBBC;
   --button: #7f5dca;
   --grey: #d0d0d0;
   --radius: 4px;
@@ -185,3 +186,8 @@ ul, ol {
   margin: var(--margin);
 }
 
+.menu {
+  padding: var(--padding);
+  border-radius: var(--radius);
+  background-color: var(--chartreuse);
+}

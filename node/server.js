@@ -34,61 +34,58 @@ app.get('/', (req, res) => {
 //POST route for chat responses
 app.post('/chat', async (req, res) => {
 	const {userMessage, timestamp} = req.body;
-    try{
-    	const request = {
-	    	model: "gpt-4o-mini",
-	    	messages: [
-	    		{
-	    			role: "user",
-	    			content: userMessage
-	    		}
-	    	],
-	    	max_tokens: 500
-	    }
-	    const response = await openai.chat.completions.create(request);
-	    const botMessage = response.choices[0].message.content.trim();
-	    console.log(botMessage);
-	    const interaction = new Interaction({
-	    	userInput: userMessage,
-	    	botResponse: botMessage,
-	    	timestamp: timestamp
-	    });
-	    await interaction.save();
-	    res.json({
-	    	botMessage: botMessage
-	    });
-    } catch (error) {
-    	console.log(`Error serving chat response: ${error}`);
-    	res.sendStatus(500);
-    }
+	openai.chat.completions.create({
+		model: "gpt-4o-mini",
+		messages: [
+			{
+				role: "user",
+				content: userMessage
+			}
+		],
+		max_tokens: 500
+	}).then(response => {
+		const botMessage = response.choices[0].message.content.trim();
+		res.json({
+			botMessage: botMessage
+		})
+		const interaction = new Interaction({
+			userInput: userMessage,
+			botResponse: botMessage,
+			timestamp: timestamp
+		});
+		interaction.save().catch(saveError => {
+			console.log(`Error saving interction: ${saveError}`);
+		})
+	}).catch(requestError => {
+		console.log(`Error in openai request: ${requestError}`);
+		res.sendStatus(500);
+	});
 });
 
 app.post("/log-event", async (req, res) => {
 	const {eventType, elementName, timestamp} = req.body;
-	try {
-		const event = new EventLog({
-			eventType: eventType,
-			elementName: elementName,
-			timestamp: timestamp
-		});
-		await event.save();
+	const event = new EventLog({
+		eventType: eventType,
+		elementName: elementName,
+		timestamp: timestamp
+	})
+	event.save().then(() => {
 		res.sendStatus(200);
-	} catch (error) {
-		console.log(`Error saving event log: ${error}`);
+	}).catch(saveError => {
+		console.log(`Error saving event log: ${saveError}`);
 		res.sendStatus(500);
-	}
+	});
 });
 
 app.post("/get-db", async (req, res) => {
-	try {
-		const documents = await Interaction.find();
+	interaction.find().then(documents => {
 		res.json({
 			documents: documents
 		});
-	} catch (err) {
-		console.log(`Error getting documents: ${error}`);
+	}).catch(databaseError => {
+		console.log(`Error getting documents: ${databaseError}`);
 		res.sendStatus(500);
-	}
+	});
 })
 
 const PORT = process.env.PORT || 3000;
