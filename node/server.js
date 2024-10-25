@@ -34,9 +34,14 @@ app.get('/', (req, res) => {
 //POST route for chat responses
 app.post('/chat', async (req, res) => {
 	const {userMessage, timestamp} = req.body;
+	console.log(`userMessage: ${userMessage}`);
 	openai.chat.completions.create({
 		model: "gpt-4o-mini",
 		messages: [
+			{
+				role: "system",
+				content: "You are an expert. Format responses with markdown and latex when needed. Format all lists with markdown not latex."
+			},
 			{
 				role: "user",
 				content: userMessage
@@ -47,7 +52,8 @@ app.post('/chat', async (req, res) => {
 		const botMessage = response.choices[0].message.content.trim();
 		res.json({
 			botMessage: botMessage
-		})
+		});
+		console.log(`botMessage: ${botMessage}`);
 		const interaction = new Interaction({
 			userInput: userMessage,
 			botResponse: botMessage,
