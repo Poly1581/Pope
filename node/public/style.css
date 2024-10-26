@@ -120,6 +120,9 @@ h1 {
 
 .highlight {
   background-color: #def440 !important;
+  border-radius: var(--radius);
+  width: fit-content;
+  padding: var(--padding);
 }
 
 .sticky {
@@ -188,7 +191,7 @@ ul, ol {
   padding-inline-start: var(--indent);
 }
 
-.message p {
+.message p{
   margin: var(--margin);
 }
 

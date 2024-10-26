@@ -131,7 +131,9 @@ function addMenu() {
 		console.log(`Content: ${content}`);
 		console.log(`Prompt: ${prompt}`);
 		console.log(`Action: ${action(content, prompt)}`);
-		makeSticky(this, await getResponse(action(content, prompt)));
+		const response = await getResponse(action(content, prompt));
+		console.log(`RESPONSE: ${response}`);
+		makeSticky(this, texme.render(response));
 		MathJax.typeset();
 	})).forEach(interactionDiv => menuContainer.appendChild(interactionDiv));
 	this.appendChild(menuContainer);
@@ -174,7 +176,7 @@ function makeDiv(content, className) {
 	//Make div
 	const div = document.createElement("div");
 	//Set content
-	div.innerText = content;
+	div.innerHTML = content;
 	//Set class
 	div.className = className;
 	return div;

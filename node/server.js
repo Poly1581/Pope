@@ -34,7 +34,6 @@ app.get('/', (req, res) => {
 //POST route for chat responses
 app.post('/chat', async (req, res) => {
 	const {userMessage, timestamp} = req.body;
-	console.log(`userMessage: ${userMessage}`);
 	openai.chat.completions.create({
 		model: "gpt-4o-mini",
 		messages: [
@@ -53,7 +52,6 @@ app.post('/chat', async (req, res) => {
 		res.json({
 			botMessage: botMessage
 		});
-		console.log(`botMessage: ${botMessage}`);
 		const interaction = new Interaction({
 			userInput: userMessage,
 			botResponse: botMessage,
