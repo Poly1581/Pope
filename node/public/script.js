@@ -142,25 +142,18 @@ function addMenu() {
 
 function makeInteractive(messageDiv) {
 	//Make all paragraphs clickable
-	const paragraphs = messageDiv.querySelectorAll("p:not(:has(mjx-mtr))");
+	const paragraphs = messageDiv.querySelectorAll("p");
 	// console.log("paragraphs:");
 	paragraphs.forEach(p => {
 		makeClickable(p);
 		// console.log(p);
 	});
 	//Make all bullets clickable
-	const bullets = messageDiv.querySelectorAll("li");
+	const bullets = messageDiv.querySelectorAll("li:not(:has(p))");
 	// console.log("bullets:");
 	bullets.forEach(li => {
 		makeClickable(li);
 		// console.log(li);
-	});
-	//Make latex clickable
-	const lines = messageDiv.querySelectorAll("mjx-mtr");
-	// console.log("lines");
-	lines.forEach(mjxmtr => {
-		makeClickable(mjxmtr);
-		// console.log(mjxmtr);
 	});
 }
 

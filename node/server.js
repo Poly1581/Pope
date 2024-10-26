@@ -46,7 +46,7 @@ app.post('/chat', async (req, res) => {
 				content: userMessage
 			}
 		],
-		max_tokens: 500
+		max_tokens: 800
 	}).then(response => {
 		const botMessage = response.choices[0].message.content.trim();
 		res.json({
