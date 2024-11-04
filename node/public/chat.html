@@ -7,16 +7,15 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id = "chat-container">
-    <h1>AI Chatbot</h1>
-    <div id = "messages"></div>
-    <form id = "chat-form">
-      <input id = "user-input" type="text" placeholder="Type your message...">
-      <button type = "submit" id = "send-btn">Send</button>
-    <form>
+  <h1>Pope</h1>
+  <div id = "containers">
+    <div id = "messages-container"></div>
+    <div id = "sticky-container"></div>
   </div>
-  <div id = "sticky-container">
-  </div>
+  <form id = "chat-form">
+    <input id = "user-input" type = "text" placeholder = "Ask Pope something...">
+    <button id = "send-btn" type = "submit"> Ask Pope </button>
+  </form>
   <script>
   window.texme = {
     renderOnLoad: false

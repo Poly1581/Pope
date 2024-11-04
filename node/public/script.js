@@ -2,9 +2,9 @@ const form = document.getElementById("chat-form");
 const sendBtn = document.getElementById("send-btn");
 const userInput = document.getElementById("user-input");
 const inputField = document.getElementById("user-input");
-const messagesContainer = document.getElementById("messages");
-const chatContainer = document.getElementById("chat-container");
+const messagesContainer = document.getElementById("messages-container");
 const stickyContainer = document.getElementById("sticky-container");
+const bottom = document.getElementById("bottom");
 
 window.marked.use({
 	breaks: true
@@ -19,8 +19,8 @@ function getUserMessage() {
 }
 
 function cleanResponse(botResponse) {
-	const equals = /&\s*=/gs
-	const lineBreak = / \\\\/gs;;
+	const equals = /&\s*=/gs;
+	const lineBreak = / \\\\/gs;
 	const startAlign = /\\\[\s\\begin{align\*}\s/gs;
 	const endAlign = /\\end{align\*}\s\\\]/gs;
 	const align = /\\\[(\s)*\\begin{align\*}.*\\end{align\*}\s\\\]/gs;
@@ -56,8 +56,13 @@ async function submitPrompt(event) {
 		alert("Prompt is empty");
 		return;
 	}
-	addMessage(`User: ${prompt}`);
-	const messageDiv = addMessage(texme.render(`Assistant: ${await getResponse(prompt)}`));
+	addMessage(messagesContainer, `User: ${prompt}`);
+	addMessage(stickyContainer, `User: ${prompt}`);
+	const messageDiv = addMessage(messagesContainer, "Pope is thinking...");
+	const stickyPaddingDiv = addMessage(stickyContainer, "");
+	const rendered = texme.render(`Pope: ${await getResponse(prompt)}`)
+	messageDiv.innerHTML = rendered;
+	stickyPaddingDiv.innerHTML = rendered;
 	MathJax.options.enableMenu = false;
 	MathJax.typeset();
 	makeInteractive(messageDiv);
@@ -84,12 +89,12 @@ function makeClickable(div) {
 	div.onclick = div.toggleMenu;
 }
 
-function addMessage(content) {
+function addMessage(location, content) {
 	const messageDiv = document.createElement("div");
 	messageDiv.classList.add("message");
 	messageDiv.innerHTML = content;
-	messagesContainer.appendChild(messageDiv);
-	messagesContainer.appendChild(document.createElement("br"));
+	location.appendChild(messageDiv);
+	location.appendChild(document.createElement("br"));
 	return messageDiv;
 }
 
@@ -119,7 +124,7 @@ function addMenu() {
 	interactions.map(({name, action}) => makeClickableDiv(name, "interaction", async event=> {
 		stopEvent(event);
 		this.removeMenu();
-		const assistantTag = "Assistant: ";
+		const assistantTag = "Pope: ";
 		const tagLength = assistantTag.length;
 		let content = this.textContent;
 		content = content.slice(0, tagLength) == assistantTag ? content.slice(tagLength) : content;
@@ -128,28 +133,27 @@ function addMenu() {
 			message = message.parentElement;
 		}
 		const prompt = message.textContent;
-		console.log(`Content: ${content}`);
-		console.log(`Prompt: ${prompt}`);
-		console.log(`Action: ${action(content, prompt)}`);
-		const response = await getResponse(action(content, prompt));
-		console.log(`RESPONSE: ${response}`);
-		makeSticky(this, texme.render(response));
+		const sticky = makeSticky(this, "Pope is explaining...");
+		sticky.querySelector(".stickyBody").innerHTML = texme.render(await getResponse(action(content, prompt)));
 		MathJax.typeset();
 	})).forEach(interactionDiv => menuContainer.appendChild(interactionDiv));
+	// menuContainer.appendChild(makeClickableDiv("+", "addInteraction", event => {
+		
+	// }));
 	this.appendChild(menuContainer);
 	this.showingMenu = !this.showingMenu;
 }
 
 function makeInteractive(messageDiv) {
 	//Make all paragraphs clickable
-	const paragraphs = messageDiv.querySelectorAll("p");
+	const paragraphs = messageDiv.querySelectorAll("p:not(:has(li), :has(p))");
 	// console.log("paragraphs:");
 	paragraphs.forEach(p => {
 		makeClickable(p);
 		// console.log(p);
 	});
 	//Make all bullets clickable
-	const bullets = messageDiv.querySelectorAll("li:not(:has(p))");
+	const bullets = messageDiv.querySelectorAll("li:not(:has(li), :has(p))");
 	// console.log("bullets:");
 	bullets.forEach(li => {
 		makeClickable(li);
@@ -190,7 +194,11 @@ function makeSticky(context, content) {
 	const header = makeHeader(context, body);
 	sticky.appendChild(header);
 	sticky.appendChild(body);
+	console.log(`TOP: ${sticky.style.top}`);
+	console.log(`CONTEXT TOP: ${context.offsetHeight}`);
+	sticky.style.transform = `translateY(${context.offsetTop-55}px)`;
 	stickyContainer.appendChild(sticky);
+	return sticky;
 }
 
 //Make sticky header
@@ -251,8 +259,9 @@ position = {
 	x: 0,
 	y: 0
 }
-
+interact(".sticky").styleCursor(false)
 interact(".sticky").draggable({
+	autoScroll: true,
 	modifiers: [
 		interact.modifiers.restrictRect({
 			restriction: "parent",
@@ -261,21 +270,12 @@ interact(".sticky").draggable({
 	],
 	listeners: {
 		move (event) {
-			position.x += event.dx
-			position.y += event.dy
-			event.target.style.transform = `translate(${position.x}px, ${position.y}px)`
+			position.x += event.dx;
+			position.y += event.dy;
+			event.target.style.transform = `translate(${position.x}px, ${position.y}px)`;
 		},
 	}
 });
-
-interact(".sticky").resizable({
-	edges: {
-		top: true,
-		bottom: true,
-		left: true,
-		right: true
-	}
-})
 
 if(form) {
 	form.addEventListener("submit", submitPrompt);
@@ -303,3 +303,10 @@ if(sendBtn) {
 		logEvent("click", "Send Button");
 	});
 }
+
+function syncScroll(source, target) {
+	target.scrollTop = source.scrollTop;
+}
+
+messagesContainer.addEventListener("scroll", event => syncScroll(messagesContainer, stickyContainer));
+stickyContainer.addEventListener("scroll", event => syncScroll(stickyContainer, messagesContainer));
