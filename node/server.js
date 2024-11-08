@@ -8,10 +8,14 @@ const fs = require("fs");
 
 const EventLog = require("./models/EventLog");
 const Interaction = require("./models/Interaction");
+const Messages = require("./models/Messages");
 
 const openai = new OpenAI({
 	apiKey: process.env.OPENAI_API_KEY
-})
+});
+
+const histories = {};
+
 
 mongoose.connect(process.env.MONGO_URI).then(() => {
 	console.log("Successfully connected to MongoDB");
@@ -21,6 +25,28 @@ mongoose.connect(process.env.MONGO_URI).then(() => {
 
 //Create server
 const app = express();
+
+function queryGPT(history) {
+	return openai.chat.completions.create({
+		model: "gpt-4o-mini",
+		messages: history,
+		max_tokens: 800
+	});
+}
+
+async function getHistory(userID) {
+	if(!histories[userID]) {
+		let userHistory = await Messages.findOne({userID: userID});
+		userHistory	= userHistory	? userHistory	: new Messages({
+			userID: userID,
+			messages: [{
+				role: "system",
+				content: "You are an expert. Format responses with markdown and latex when needed. Format all lists with markdown not latex."
+			}]
+		});
+		histories[userID] = userHistory;
+	}
+}
 
 //Use body parser and public directory
 app.use(bodyParser.json());
@@ -32,38 +58,36 @@ app.get('/', (req, res) => {
 });
 
 //POST route for chat responses
-app.post('/chat', async (req, res) => {
-	const {userMessage, timestamp} = req.body;
-	openai.chat.completions.create({
-		model: "gpt-4o-mini",
-		messages: [
-			{
-				role: "system",
-				content: "You are an expert. Format responses with markdown and latex when needed. Format all lists with markdown not latex."
-			},
-			{
-				role: "user",
-				content: userMessage
-			}
-		],
-		max_tokens: 800
-	}).then(response => {
+app.post("/chat", async (req, res) => {
+	const {userID, input, timestamp} = req.body;
+	await getHistory(userID);
+	histories[userID].messages.push({
+		role: "user",
+		content: input
+	});
+	const response = await queryGPT(histories[userID].messages);
+	const botMessage = response.choices[0].message.content.trim();
+	histories	[userID].messages.push({
+		role: "assistant",
+		content: botMessage
+	});
+	histories[userID].save();
+	res.json({
+		botMessage, botMessage
+	});
+});
+
+app.post("/sticky", async (req, res) => {
+		const {userID, input, timestamp} = req.body;
+		await getHistory(userID);
+		const response = await queryGPT(histories[userID].messages.slice().push({
+			role: "user",
+			content: input
+		}));
 		const botMessage = response.choices[0].message.content.trim();
 		res.json({
 			botMessage: botMessage
-		});
-		const interaction = new Interaction({
-			userInput: userMessage,
-			botResponse: botMessage,
-			timestamp: timestamp
-		});
-		interaction.save().catch(saveError => {
-			console.log(`Error saving interction: ${saveError}`);
 		})
-	}).catch(requestError => {
-		console.log(`Error in openai request: ${requestError}`);
-		res.sendStatus(500);
-	});
 });
 
 app.post("/log-event", async (req, res) => {
@@ -80,17 +104,6 @@ app.post("/log-event", async (req, res) => {
 		res.sendStatus(500);
 	});
 });
-
-app.post("/get-db", async (req, res) => {
-	interaction.find().then(documents => {
-		res.json({
-			documents: documents
-		});
-	}).catch(databaseError => {
-		console.log(`Error getting documents: ${databaseError}`);
-		res.sendStatus(500);
-	});
-})
 
 const PORT = process.env.PORT || 3000;
 

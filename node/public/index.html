@@ -10,7 +10,16 @@
   <h1>
     New and improved chat bot!
   </h1>
-  <button id = "link-to-chatbot" onclick = "location.href = './chat.html'">chat</button>
-  <script src="script.js"></script>
+  <form id="participant-form" action="/chat.html">
+    <label for="participantID">Enter your Participant ID:</label>
+    <input type="text" id="participantID" name="participantID" required>
+    <button type="submit">Start Chat</button>
+  </form>
+  <script>
+    document.getElementById('participant-form').addEventListener('submit', function(event) {
+      const participantID = document.getElementById('participantID').value;
+      localStorage.setItem('participantID', participantID);
+    });
+  </script>
 </body>
 </html>

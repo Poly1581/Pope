@@ -34,18 +34,30 @@ function cleanResponse(botResponse) {
 	return replaced;
 }
 
-async function getResponse(prompt) {
-	const request = {
+function makeRequest(prompt) {
+	return {
 		method: "POST",
 		headers: {"Content-Type": "application/json"},
 		body: JSON.stringify({
-			userMessage: prompt,
+			userID: localStorage.participantID,
+			input: prompt,
 			timestamp: new Date()
 		})
 	}
+}
+
+async function getChatResponse(prompt) {
+	const request = makeRequest(prompt);
 	const response = await fetch("/chat", request);
-	const {botMessage} = await response.json();
-	console.log(botMessage);
+	const {botMessage} = await	response.json();
+	return cleanResponse(botMessage);
+
+}
+
+async function getStickyResponse(prompt) {
+	const request = makeRequest(prompt);
+	const response = await fetch("/sticky", request);
+	const {botMessage} = await	response.json();
 	return cleanResponse(botMessage);
 }
 
@@ -60,7 +72,7 @@ async function submitPrompt(event) {
 	addMessage(stickyContainer, `User: ${prompt}`);
 	const messageDiv = addMessage(messagesContainer, "Pope is thinking...");
 	const stickyPaddingDiv = addMessage(stickyContainer, "");
-	const rendered = texme.render(`Pope: ${await getResponse(prompt)}`)
+	const rendered = texme.render(`Pope: ${await getChatResponse(prompt)}`)
 	messageDiv.innerHTML = rendered;
 	stickyPaddingDiv.innerHTML = rendered;
 	MathJax.options.enableMenu = false;
@@ -134,7 +146,7 @@ function addMenu() {
 		}
 		const prompt = message.textContent;
 		const sticky = makeSticky(this, "Pope is explaining...");
-		sticky.querySelector(".stickyBody").innerHTML = texme.render(await getResponse(action(content, prompt)));
+		sticky.querySelector(".stickyBody").innerHTML = texme.render(await getStickyResponse(action(content, prompt)));
 		MathJax.typeset();
 	})).forEach(interactionDiv => menuContainer.appendChild(interactionDiv));
 	// menuContainer.appendChild(makeClickableDiv("+", "addInteraction", event => {
