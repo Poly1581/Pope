@@ -12,6 +12,31 @@ window.marked.use({
 
 let previousHighlightedMessage = null;
 
+window.addEventListener("load", async () => {
+	const response = await fetch("/chat/load", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+			userID: localStorage.participantID
+		})
+	});
+	const {history} = await response.json();
+	history.history.forEach(message => {
+		if(message.role != "system") {
+			const prefix = message.role == "user" ? "User: " : "Pope: ";
+			const messageDiv = addMessage(messagesContainer, texme.render(prefix + cleanResponse(message.content)));
+			const stickyDiv = addMessage(stickyContainer, texme.render(prefix + cleanResponse(message.content)));
+			if(message.role == "assistant") {
+				makeInteractive(messageDiv);
+			}
+		}
+	});
+	MathJax.options.enableMenu = false;
+	MathJax.typeset();
+});
+
 function getUserMessage() {
 	const prompt = inputField.value;
 	inputField.value = "";
@@ -72,7 +97,7 @@ async function submitPrompt(event) {
 	addMessage(stickyContainer, `User: ${prompt}`);
 	const messageDiv = addMessage(messagesContainer, "Pope is thinking...");
 	const stickyPaddingDiv = addMessage(stickyContainer, "");
-	const rendered = texme.render(`Pope: ${await getChatResponse(prompt)}`)
+	const rendered = `Pope: ${texme.render(await getChatResponse(prompt))}`;
 	messageDiv.innerHTML = rendered;
 	stickyPaddingDiv.innerHTML = rendered;
 	MathJax.options.enableMenu = false;
@@ -87,6 +112,7 @@ async function logEvent(event, element) {
 			"Content-Type": "application/json"
 		},
 		body: JSON.stringify({
+			userID: localStorage.participantID,
 			eventType: event,
 			elementName: element,
 			timestamp: new Date()
@@ -107,6 +133,12 @@ function addMessage(location, content) {
 	messageDiv.innerHTML = content;
 	location.appendChild(messageDiv);
 	location.appendChild(document.createElement("br"));
+	messageDiv.addEventListener("mouseover", () => {
+		logEvent("hover", "Chat Message");
+	});
+	inputField.addEventListener("focus", () => {
+		logEvent("focus", "Chat Message");
+	});
 	return messageDiv;
 }
 
@@ -210,6 +242,12 @@ function makeSticky(context, content) {
 	console.log(`CONTEXT TOP: ${context.offsetHeight}`);
 	sticky.style.transform = `translateY(${context.offsetTop-55}px)`;
 	stickyContainer.appendChild(sticky);
+	stickyContainer.addEventListener("mouseover", () => {
+		logEvent("hover", "Sticky");
+	});
+	stickyContainer.addEventListener("focus", () => {
+		logEvent("focus", "Sticky");
+	});
 	return sticky;
 }
 
