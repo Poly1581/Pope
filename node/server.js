@@ -5,7 +5,6 @@ const OpenAI = require("openai");
 const path = require("path");
 require("dotenv").config();
 const fs = require("fs");
-const texme = require("texme");
 
 const History = require("./models/History");
 
@@ -89,23 +88,6 @@ async function getHistory(userID) {
 			stickies: []
 		});
 	}
-
-}
-
-function cleanResponse(response) {
-	const equals = /&\s*=/gs;
-	const lineBreak = / \\\\/gs;
-	const startAlign = /\\\[\s\\begin{align\*}\s/gs;
-	const endAlign = /\\end{align\*}\s\\\]/gs;
-	const align = /\\\[(\s)*\\begin{align\*}.*\\end{align\*}\s\\\]/gs;
-	const replaced = response.replaceAll(align, match => {
-		const replaceLine = match.replaceAll(lineBreak, lineMatch => "\\\)\n - \\\(");
-		const replaceStart = replaceLine.replaceAll(startAlign, startMatch => "- \\\(");
-		const replaceEnd = replaceStart.replaceAll(endAlign, endMatch => "\\\)");
-		const replaceEquals = replaceEnd.replaceAll(equals, "=");
-		return replaceEquals;
-	});
-	return replaced;
 }
 
 //Use body parser and public directory
@@ -123,10 +105,9 @@ app.post("/chat/create", async (req, res) => {
 	addMessage(userID, userMessage);
 	const response = await askChatGPT(userID);
 	addHistory(userID, "assistant", response);
-	const botMessage = texme.render("Pope: " + cleanResponse(response));
-	addMessage(userID, botMessage);
+	addMessage(userID, response);
 	res.json({
-		response: botMessage
+		response: response
 	});
 });
 
