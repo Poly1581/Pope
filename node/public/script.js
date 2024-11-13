@@ -178,7 +178,8 @@ function addMenu() {
 		}
 		const prompt = message.textContent;
 		const rect = stickyContainer.getBoundingClientRect();
-		const vertical = event.clientY - rect.top - 150;
+		console.log(rect);
+		const vertical = event.clientY + stickyContainer.scrollTop - rect.top - 150;
 		const horizontal = (rect.right - rect.left) / 2 - 150
 		const sticky = makeSticky(this, "Pope is explaining...", vertical, horizontal);
 		sticky.querySelector(".stickyBody").innerHTML = texme.render(await getStickyResponse(action(content, prompt)));
