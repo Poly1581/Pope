@@ -26,7 +26,7 @@ setInterval(() => {
 		console.log(`\tSaving ${userID}'s history`);
 		histories[userID].save();
 	}
-}, 10000);
+}, 100000);
 
 const app = express();
 

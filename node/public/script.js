@@ -177,7 +177,8 @@ function addMenu() {
 			message = message.parentElement;
 		}
 		const prompt = message.textContent;
-		const sticky = makeSticky(this, "Pope is explaining...");
+		const rect = stickyContainer.getBoundingClientRect();
+		const sticky = makeSticky(this, "Pope is explaining...", event.clientY - rect.top);
 		sticky.querySelector(".stickyBody").innerHTML = texme.render(await getStickyResponse(action(content, prompt)));
 		MathJax.typeset();
 	})).forEach(interactionDiv => menuContainer.appendChild(interactionDiv));
@@ -231,16 +232,16 @@ function stopEvent(event) {
 }
 
 //Make sticky
-function makeSticky(context, content) {
+function makeSticky(context, content, height) {
 	//SET WIDTH AND HEIGHT
 	const sticky = makeDiv("", "sticky");
 	const body = makeDiv(content, "stickyBody");
 	const header = makeHeader(context, body);
 	sticky.appendChild(header);
 	sticky.appendChild(body);
-	console.log(`TOP: ${sticky.style.top}`);
-	console.log(`CONTEXT TOP: ${context.offsetHeight}`);
-	sticky.style.transform = `translateY(${context.offsetTop-55}px)`;
+	console.log(`HEIGHT: ${height}`);
+	sticky.setAttribute("ypos", height);
+	sticky.style.transform = `translateY(${height}px)`;
 	stickyContainer.appendChild(sticky);
 	stickyContainer.addEventListener("mouseover", () => {
 		logEvent("hover", "Sticky");
@@ -305,10 +306,6 @@ function makeMinimize(body) {
 }
 
 //Apply drag action to draggables
-position = {
-	x: 0,
-	y: 0
-}
 interact(".sticky").styleCursor(false)
 interact(".sticky").draggable({
 	autoScroll: true,
@@ -320,9 +317,14 @@ interact(".sticky").draggable({
 	],
 	listeners: {
 		move (event) {
-			position.x += event.dx;
-			position.y += event.dy;
-			event.target.style.transform = `translate(${position.x}px, ${position.y}px)`;
+			const target = event.target;
+			let ypos = parseInt(target.getAttribute("ypos") || 0);
+			let xpos = parseInt(target.getAttribute("xpos") || 0);
+			xpos += event.dx;
+			ypos += event.dy;
+			event.target.style.transform = `translate(${xpos}px, ${ypos}px)`;
+			target.setAttribute("ypos", ypos);
+			target.setAttribute("xpos", xpos);
 		},
 	}
 });
