@@ -178,7 +178,9 @@ function addMenu() {
 		}
 		const prompt = message.textContent;
 		const rect = stickyContainer.getBoundingClientRect();
-		const sticky = makeSticky(this, "Pope is explaining...", event.clientY - rect.top);
+		const vertical = event.clientY - rect.top - 150;
+		const horizontal = (rect.right - rect.left) / 2 - 150
+		const sticky = makeSticky(this, "Pope is explaining...", vertical, horizontal);
 		sticky.querySelector(".stickyBody").innerHTML = texme.render(await getStickyResponse(action(content, prompt)));
 		MathJax.typeset();
 	})).forEach(interactionDiv => menuContainer.appendChild(interactionDiv));
@@ -232,16 +234,16 @@ function stopEvent(event) {
 }
 
 //Make sticky
-function makeSticky(context, content, height) {
+function makeSticky(context, content, vertical, horizontal) {
 	//SET WIDTH AND HEIGHT
 	const sticky = makeDiv("", "sticky");
 	const body = makeDiv(content, "stickyBody");
 	const header = makeHeader(context, body);
 	sticky.appendChild(header);
 	sticky.appendChild(body);
-	console.log(`HEIGHT: ${height}`);
-	sticky.setAttribute("ypos", height);
-	sticky.style.transform = `translateY(${height}px)`;
+	sticky.setAttribute("ypos", vertical);
+	sticky.setAttribute("xpos", horizontal)
+	sticky.style.transform = `translate(${horizontal}px, ${vertical}px)`;
 	stickyContainer.appendChild(sticky);
 	stickyContainer.addEventListener("mouseover", () => {
 		logEvent("hover", "Sticky");

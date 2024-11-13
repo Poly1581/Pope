@@ -119,21 +119,18 @@ h1 {
   border-bottom-right-radius: var(--radius);
 }
 
-.close {
-  margin-left: 15px;
+.close, .context, .minimize {
   background-color: var(--violet);
   border-radius: var(--radius);
+  padding: 5px;
 }
 
-.context {
-  background-color: var(--violet);
-  border-radius: var(--radius);
+.close {
+  margin-left: 15px;
 }
 
 .minimize {
   margin-right: 15px;
-  background-color: var(--violet);
-  border-radius: var(--radius);
 }
 
 .message {
