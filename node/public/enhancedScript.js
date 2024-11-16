@@ -4,7 +4,6 @@ const userInput = document.getElementById("user-input");
 const inputField = document.getElementById("user-input");
 const messagesContainer = document.getElementById("messages-container");
 const stickyContainer = document.getElementById("sticky-container");
-const bottom = document.getElementById("bottom");
 
 window.marked.use({
 	breaks: true
@@ -25,7 +24,7 @@ window.addEventListener("load", async () => {
 	const {history} = await response.json();
 	history.history.forEach(message => {
 		if(message.role != "system") {
-			const prefix = message.role == "user" ? "User: " : "Pope: ";
+			const prefix = message.role == "user" ? "User: " : "Agent: ";
 			const messageDiv = addMessage(messagesContainer, texme.render(prefix + cleanResponse(message.content)));
 			const stickyDiv = addMessage(stickyContainer, texme.render(prefix + cleanResponse(message.content)));
 			if(message.role == "assistant") {

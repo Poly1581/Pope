@@ -167,7 +167,7 @@ ul, ol {
   padding-inline-start: var(--indent);
 }
 
-.message p{
+.message p {
   margin: var(--margin);
 }
 
