@@ -5,7 +5,7 @@ const inputField = document.getElementById("user-input");
 const messagesContainer = document.getElementById("messages-container");
 
 window.addEventListener("load", async () => {
-	const response = await fetch("/chat/load", {
+	const response = await fetch("/baseline/chat/load", {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json"
@@ -15,7 +15,8 @@ window.addEventListener("load", async () => {
 		})
 	});
 	const {history} = await response.json();
-	history.history.forEach(message => {
+	console.log(history);
+	history.forEach(message => {
 		if(message.role != "system") {
 			const prefix = message.role == "user" ? "User: " : "Agent: ";
 			const messageDiv = addMessage(messagesContainer, prefix + message.content)
@@ -29,8 +30,8 @@ function getUserMessage() {
 	return prompt;
 }
 
-function makeRequest(prompt) {
-	return {
+async function getChatResponse(prompt) {
+	const response = await fetch("/baseline/chat", {
 		method: "POST",
 		headers: {"Content-Type": "application/json"},
 		body: JSON.stringify({
@@ -38,12 +39,7 @@ function makeRequest(prompt) {
 			input: prompt,
 			timestamp: new Date()
 		})
-	}
-}
-
-async function getChatResponse(prompt) {
-	const request = makeRequest(prompt);
-	const response = await fetch("/chat", request);
+	});
 	const {botMessage} = await	response.json();
 	return botMessage;
 }
@@ -61,7 +57,7 @@ async function submitPrompt(event) {
 }
 
 async function logEvent(event, element) {
-	const response = await fetch("/log-event", {
+	const response = await fetch("/baseline/log-event", {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json"

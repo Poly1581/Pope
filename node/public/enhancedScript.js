@@ -12,7 +12,7 @@ window.marked.use({
 let previousHighlightedMessage = null;
 
 window.addEventListener("load", async () => {
-	const response = await fetch("/chat/load", {
+	const response = await fetch("/enhanced/chat/load", {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json"
@@ -22,7 +22,8 @@ window.addEventListener("load", async () => {
 		})
 	});
 	const {history} = await response.json();
-	history.history.forEach(message => {
+	console.log(history);
+	history.forEach(message => {
 		if(message.role != "system") {
 			const prefix = message.role == "user" ? "User: " : "Agent: ";
 			const messageDiv = addMessage(messagesContainer, texme.render(prefix + cleanResponse(message.content)));
@@ -58,8 +59,8 @@ function cleanResponse(botResponse) {
 	return replaced;
 }
 
-function makeRequest(prompt) {
-	return {
+async function getChatResponse(prompt) {
+	const response = await fetch("/enhanced/chat", {
 		method: "POST",
 		headers: {"Content-Type": "application/json"},
 		body: JSON.stringify({
@@ -67,20 +68,22 @@ function makeRequest(prompt) {
 			input: prompt,
 			timestamp: new Date()
 		})
-	}
-}
-
-async function getChatResponse(prompt) {
-	const request = makeRequest(prompt);
-	const response = await fetch("/chat", request);
+	});
 	const {botMessage} = await	response.json();
 	return cleanResponse(botMessage);
 
 }
 
 async function getStickyResponse(prompt) {
-	const request = makeRequest(prompt);
-	const response = await fetch("/sticky", request);
+	const response = await fetch("/enhanced/sticky", {
+		method: "POST",
+		headers: {"Content-Type": "application/json"},
+		body: JSON.stringify({
+			userID: localStorage.participantID,
+			input: prompt,
+			timestamp: new Date()
+		})
+	});
 	const {botMessage} = await	response.json();
 	return cleanResponse(botMessage);
 }
@@ -94,9 +97,9 @@ async function submitPrompt(event) {
 	}
 	addMessage(messagesContainer, `User: ${prompt}`);
 	addMessage(stickyContainer, `User: ${prompt}`);
-	const messageDiv = addMessage(messagesContainer, "Pope is thinking...");
+	const messageDiv = addMessage(messagesContainer, "Agent is thinking...");
 	const stickyPaddingDiv = addMessage(stickyContainer, "");
-	const rendered = `Pope: ${texme.render(await getChatResponse(prompt))}`;
+	const rendered = `Agent: ${texme.render(await getChatResponse(prompt))}`;
 	messageDiv.innerHTML = rendered;
 	stickyPaddingDiv.innerHTML = rendered;
 	MathJax.options.enableMenu = false;
@@ -105,7 +108,7 @@ async function submitPrompt(event) {
 }
 
 async function logEvent(event, element) {
-	const response = await fetch("/log-event", {
+	const response = await fetch("/enhanced/log-event", {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json"
@@ -167,7 +170,7 @@ function addMenu() {
 	interactions.map(({name, action}) => makeClickableDiv(name, "interaction", async event=> {
 		stopEvent(event);
 		this.removeMenu();
-		const assistantTag = "Pope: ";
+		const assistantTag = "Assistant: ";
 		const tagLength = assistantTag.length;
 		let content = this.textContent;
 		content = content.slice(0, tagLength) == assistantTag ? content.slice(tagLength) : content;
@@ -180,7 +183,7 @@ function addMenu() {
 		console.log(rect);
 		const vertical = event.clientY + stickyContainer.scrollTop - rect.top - 150;
 		const horizontal = (rect.right - rect.left) / 2 - 150
-		const sticky = makeSticky(this, "Pope is explaining...", vertical, horizontal);
+		const sticky = makeSticky(this, "Assistant is explaining...", vertical, horizontal);
 		sticky.querySelector(".stickyBody").innerHTML = texme.render(await getStickyResponse(action(content, prompt)));
 		MathJax.typeset();
 	})).forEach(interactionDiv => menuContainer.appendChild(interactionDiv));

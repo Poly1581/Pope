@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const HistorySchema = new Schema({
+const BaselineLogSchema = new Schema({
 	userID: String,
 	timestamp : {
 		type: Date,
@@ -21,4 +21,4 @@ const HistorySchema = new Schema({
 	}]
 })
 
-module.exports = mongoose.model("History", HistorySchema);
+module.exports = mongoose.model("BaselineLog", BaselineLogSchema);
