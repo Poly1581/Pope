@@ -116,6 +116,13 @@ async function addEnhancedInteraction(userID, interaction) {
 	enhancedLogs[userID].interactions.push(interaction);
 }
 
+async function addSticky(userID, sticky) {
+	if(!(userID in enhancedLogs)) {
+		await getEnhancedLogs(userID);
+	}
+	enhancedLogs[userID].stickies.push(sticky);
+}
+
 app.post("/enhanced/chat", async (req, res) => {
 	const {userID, input, timestamp} = req.body;
 	await getEnhancedLogs(userID);
@@ -155,6 +162,10 @@ app.post("/enhanced/sticky", async (req, res) => {
 	const {userID, input, timestamp} = req.body;
 	await getEnhancedLogs(userID);
 	const response = await askChatGPT(enhancedLogs[userID].history, input);
+	addSticky(userID, {
+		prompt: input,
+		response: response
+	})
 	res.json({
 		botMessage: response
 	});

@@ -18,6 +18,10 @@ const EnhancedLogSchema = new Schema({
 	history: [{
 		role: String,
 		content: String
+	}],
+	stickies: [{
+		prompt: String,
+		response: String
 	}]
 })
 
