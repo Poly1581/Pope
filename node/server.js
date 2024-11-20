@@ -125,7 +125,6 @@ async function addSticky(userID, sticky) {
 
 app.post("/enhanced/chat", async (req, res) => {
 	const {userID, input, timestamp} = req.body;
-	await getEnhancedLogs(userID);
 	addEnhancedMessage(userID, {
 		role: "user",
 		content: input
@@ -142,7 +141,6 @@ app.post("/enhanced/chat", async (req, res) => {
 
 app.post("/enhanced/chat/load", async (req, res) => {
 	const {userID} = req.body;
-	await getEnhancedLogs(userID);
 	res.json({
 		history: enhancedLogs[userID].history
 	})
@@ -150,7 +148,6 @@ app.post("/enhanced/chat/load", async (req, res) => {
 
 app.post("/enhanced/log-event", async (req, res) => {
 	const {userID, eventType, elementName} = req.body;
-	await getEnhancedLogs(userID);
 	addEnhancedInteraction(userID, {
 		eventType: eventType,
 		elementName: elementName
@@ -160,7 +157,6 @@ app.post("/enhanced/log-event", async (req, res) => {
 
 app.post("/enhanced/sticky", async (req, res) => {
 	const {userID, input, timestamp} = req.body;
-	await getEnhancedLogs(userID);
 	const response = await askChatGPT(enhancedLogs[userID].history, input);
 	addSticky(userID, {
 		prompt: input,
@@ -202,7 +198,6 @@ async function addBaselineInteraction(userID, interaction) {
 
 app.post("/baseline/chat", async (req, res) => {
 	const {userID, input, timestamp} = req.body;
-	await getBaselineLogs(userID);
 	addBaselineMessage(userID, {
 		role: "user",
 		content: input
@@ -219,7 +214,6 @@ app.post("/baseline/chat", async (req, res) => {
 
 app.post("/baseline/chat/load", async (req, res) => {
 	const {userID} = req.body;
-	await getBaselineLogs(userID);
 	res.json({
 		history: baselineLogs[userID].history
 	})
@@ -227,7 +221,6 @@ app.post("/baseline/chat/load", async (req, res) => {
 
 app.post("/baseline/log-event", async (req, res) => {
 	const {userID, eventType, elementName} = req.body;
-	await getBaselineLogs(userID);
 	addBaselineInteraction(userID, {
 		eventType: eventType,
 		elementName: elementName
