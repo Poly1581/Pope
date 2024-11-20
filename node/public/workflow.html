@@ -6,14 +6,7 @@
   <title>Chat Interface</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body style = "justify-content:center">
-  <script>
-    const participantID = localStorage.participantID;
-    const enhanced = participantID.split("").reduce((a, v) => a + v.charCodeAt(0), 0) % 2 == 0;
-    function agentLink() {
-      return agent = enhanced ? "enhancedAgent.html" : "baselineAgent.html";
-    }
-  </script>
+<body style = "justify-content:center;font-size: 24px;">
   <h1>
     Study Steps
   </h1>
@@ -41,14 +34,19 @@
     </li>
   </ol>
   <script>
+    // I tried to update the urls inline (in the a tags), but html was being grumpy
+    // (substituting strings escaped with "${}", but not replacing them), so I did this instead.
+    const participantID = localStorage.participantID;
+    const enhanced = participantID.split("").reduce((a, v) => a + v.charCodeAt(0), 0) % 2 == 0;
+    const participant = `?participantID=${encodeURIComponent(participantID)}`
     const urls = {
-      "demographics": `https://usfca.qualtrics.com/jfe/form/SV_bmv16IEwDQaqN6K?participantID=${encodeURIComponent(localStorage.participantID)}`,
-      "task": "",
-      "preQuestionnaire": "",
-      "preAssessment": "",
-      "agent": "/enhancedAgent.html",
-      "postQuestionnaire": "",
-      "postAsssessment": ""
+      "demographics": "https://usfca.qualtrics.com/jfe/form/SV_bmv16IEwDQaqN6K" + participant,
+      "task": "/taskExplanation.html",
+      "preQuestionnaire": "https://usfca.qualtrics.com/jfe/form/SV_a5HFBYEFlez8tJI" + participant,
+      "preAssessment": ``,
+      "agent": enhanced ? "/enhancedAgent.html" : "baselineAgent.html",
+      "postQuestionnaire": "https://usfca.qualtrics.com/jfe/form/SV_bjf2BY7G3Zn5h3g" + participant,
+      "postAsssessment": ``
     }
     for(const [id, url] of Object.entries(urls)) {
       document.getElementById(id).setAttribute("href", url);

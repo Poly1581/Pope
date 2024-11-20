@@ -22,7 +22,7 @@ window.addEventListener("load", async () => {
 		})
 	});
 	const {history} = await response.json();
-	console.log(history);
+	//Add demo
 	history.forEach(message => {
 		if(message.role != "system") {
 			const prefix = message.role == "user" ? "User: " : "Agent: ";
@@ -164,7 +164,7 @@ const interactions = [
 	},
 ];
 
-function addMenu() {
+function addMenu(interactions) {
 	const menuContainer = document.createElement("div");
 	menuContainer.classList.add("menu");
 	interactions.map(({name, action}) => makeClickableDiv(name, "interaction", async event=> {
