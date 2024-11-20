@@ -80,7 +80,7 @@ app.get('/', (req, res) => {
 });
 
 //Listen on env port (default to 3000)
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 9000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
@@ -130,6 +130,7 @@ app.post("/enhanced/chat", async (req, res) => {
 		content: input
 	});
 	const response = await askChatGPT(enhancedLogs[userID].history);
+	console.log(response);
 	addEnhancedMessage(userID, {
 		role: "assistant",
 		content: response
@@ -141,6 +142,7 @@ app.post("/enhanced/chat", async (req, res) => {
 
 app.post("/enhanced/chat/load", async (req, res) => {
 	const {userID} = req.body;
+	await getEnhancedLogs(userID);
 	res.json({
 		history: enhancedLogs[userID].history
 	})
@@ -214,6 +216,7 @@ app.post("/baseline/chat", async (req, res) => {
 
 app.post("/baseline/chat/load", async (req, res) => {
 	const {userID} = req.body;
+	await getBaselineLogs(userID);
 	res.json({
 		history: baselineLogs[userID].history
 	})

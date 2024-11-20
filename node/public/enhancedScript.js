@@ -23,6 +23,7 @@ window.addEventListener("load", async () => {
 	});
 	const {history} = await response.json();
 	//Add demo
+	addDemo();
 	history.forEach(message => {
 		if(message.role != "system") {
 			const prefix = message.role == "user" ? "User: " : "Agent: ";
@@ -71,7 +72,6 @@ async function getChatResponse(prompt) {
 	});
 	const {botMessage} = await	response.json();
 	return cleanResponse(botMessage);
-
 }
 
 async function getStickyResponse(prompt) {
@@ -122,6 +122,30 @@ async function logEvent(event, element) {
 	});
 }
 
+function addDemo() {
+	const demo = addMessage(messagesContainer, "Demo");
+	makeClickable(demo);
+	demo.addMenu = function() {
+		const menuContainer = document.createElement("div");
+		menuContainer.classList.add("menu");
+		menuContainer.appendChild(makeClickableDiv("explain interactions", "interaction", event => {
+			stopEvent(event);
+			this.removeMenu();
+			const content = texme.render("- Click on any part of an assistant response that you wish to have explained to add an interaction menu.\n" +
+				"- Click explain to explain the part of the response you clicked on.\n" +
+				"- The explanation will be rendered in a note that can be minimized, closed, or moved.\n" + 
+				"- Click \"show context\" on the top of the note to highlight the part of the response that the sticky note explains.");
+			const rect = stickyContainer.getBoundingClientRect();
+			const vertical = event.clientY + stickyContainer.scrollTop - rect.top;
+			const horizontal = (rect.right - rect.left) / 2 - 150;
+			makeSticky(this, content, vertical, horizontal);
+		}));
+		this.appendChild(menuContainer);
+		this.showingMenu = !this.showingMenu;
+	}
+	demo.toggleMenu();
+}
+
 function makeClickable(div) {
 	div.addMenu = addMenu;
 	div.removeMenu = removeMenu;
@@ -164,7 +188,7 @@ const interactions = [
 	},
 ];
 
-function addMenu(interactions) {
+function addMenu() {
 	const menuContainer = document.createElement("div");
 	menuContainer.classList.add("menu");
 	interactions.map(({name, action}) => makeClickableDiv(name, "interaction", async event=> {
@@ -180,9 +204,8 @@ function addMenu(interactions) {
 		}
 		const prompt = message.textContent;
 		const rect = stickyContainer.getBoundingClientRect();
-		console.log(rect);
 		const vertical = event.clientY + stickyContainer.scrollTop - rect.top - 150;
-		const horizontal = (rect.right - rect.left) / 2 - 150
+		const horizontal = (rect.right - rect.left) / 2 - 150;
 		const sticky = makeSticky(this, "Assistant is explaining...", vertical, horizontal);
 		sticky.querySelector(".stickyBody").innerHTML = texme.render(await getStickyResponse(action(content, prompt)));
 		MathJax.typeset();
