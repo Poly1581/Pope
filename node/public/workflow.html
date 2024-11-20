@@ -7,45 +7,52 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body style = "justify-content:center">
+  <script>
+    const participantID = localStorage.participantID;
+    const enhanced = participantID.split("").reduce((a, v) => a + v.charCodeAt(0), 0) % 2 == 0;
+    function agentLink() {
+      return agent = enhanced ? "enhancedAgent.html" : "baselineAgent.html";
+    }
+  </script>
   <h1>
     Study Steps
   </h1>
   <ol style = "padding-inline-start:0">
     <li>
-      <a href = "https://usfca.qualtrics.com/jfe/form/SV_bmv16IEwDQaqN6K?participantID=${encodeURIComponent(localStorage.participantID)}">
-        Demographics Questionnaire
-      </a>
+      <a id = "demographics">Demographics Questionnaire</a>
     </li>
     <li>
-      <a href = "">
-        Task Explanation
-      </a>
+      <a id = "task">Task Explanation</a>
     </li>
     <li>
-      <a href = "">
-        Pre-task Questionnaire
-      </a>
+      <a id = "preQuestionnaire">Pre-task Questionnaire</a>
     </li>
     <li>
-      <a href = "">
-        Pre-task Knowledge Assessment
-      </a>
+      <a id = "preAssessment">Pre-task Knowledge Assessment</a>
     </li>
     <li>
-      <a href = "">
-        Baseline/Enhanced Agent
-      </a>
+      <a id = "agent">Baseline/Enhanced Agent</a>
     </li>
     <li>
-      <a href = "">
-        Post-task Knowledge Assessment
-      </a>
+      <a id = "postAsssessment">Post-task Knowledge Assessment</a>
     </li>
     <li>
-      <a href = "">
-        Post-task Questionnaire
-      </a>
+      <a id = "postQuestionnaire">Post-task Questionnaire</a>
     </li>
   </ol>
+  <script>
+    const urls = {
+      "demographics": `https://usfca.qualtrics.com/jfe/form/SV_bmv16IEwDQaqN6K?participantID=${encodeURIComponent(localStorage.participantID)}`,
+      "task": "",
+      "preQuestionnaire": "",
+      "preAssessment": "",
+      "agent": "/enhancedAgent.html",
+      "postQuestionnaire": "",
+      "postAsssessment": ""
+    }
+    for(const [id, url] of Object.entries(urls)) {
+      document.getElementById(id).setAttribute("href", url);
+    }
+  </script>
 </body>
 </html>
