@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chat Interface</title>
+  <title>Study Workflow</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body style = "justify-content:center;font-size: 24px;">
@@ -12,25 +12,25 @@
   </h1>
   <ol style = "padding-inline-start:0">
     <li>
-      <a id = "demographics">Demographics Questionnaire</a>
+      <a id = "demographics" target = "_blank">Demographics Questionnaire</a>
     </li>
     <li>
-      <a id = "preAssessment">Pre-task Knowledge Assessment</a>
+      <a id = "task" target = "_blank">Task Explanation</a>
     </li>
     <li>
-      <a id = "task">Task Explanation</a>
+      <a id = "preQuestionnaire" target = "_blank">Pre-task Questionnaire</a>
     </li>
     <li>
-      <a id = "preQuestionnaire">Pre-task Questionnaire</a>
+      <a id = "preAssessment" target = "_blank">Pre-task Knowledge Assessment</a>
     </li>
     <li>
-      <a id = "agent">Baseline/Enhanced Agent</a>
+      <a id = "agent" target = "_blank">Baseline/Enhanced Agent</a>
     </li>
     <li>
-      <a id = "postAsssessment">Post-task Knowledge Assessment</a>
+      <a id = "postAsssessment" target = "_blank">Post-task Knowledge Assessment</a>
     </li>
     <li>
-      <a id = "postQuestionnaire">Post-task Questionnaire</a>
+      <a id = "postQuestionnaire" target = "_blank">Post-task Questionnaire</a>
     </li>
   </ol>
   <script>
@@ -46,7 +46,7 @@
       "preAssessment": "https://usfca.qualtrics.com/jfe/form/SV_5iph24dTMziJP7w" + participant,
       "agent": enhanced ? "/enhancedAgent.html" : "baselineAgent.html",
       "postQuestionnaire": "https://usfca.qualtrics.com/jfe/form/SV_bjf2BY7G3Zn5h3g" + participant,
-      "postAsssessment": "https://usfca.qualtrics.com/jfe/form/SV_5hfsUiG4buFRmpE" + participant
+      "postAsssessment": "https://usfca.qualtrics.com/jfe/form/SV_cOMG18pj8PY9MBE" + participant
     }
     for(const [id, url] of Object.entries(urls)) {
       document.getElementById(id).setAttribute("href", url);
