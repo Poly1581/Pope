@@ -38,6 +38,8 @@ window.addEventListener("load", async () => {
 	MathJax.typeset();
 });
 
+setTimeout(event => window.location.href = "/workflow.html", 1200000);
+
 function getUserMessage() {
 	const prompt = inputField.value;
 	inputField.value = "";
