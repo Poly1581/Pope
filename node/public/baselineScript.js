@@ -19,9 +19,10 @@ window.addEventListener("load", async () => {
 	history.forEach(message => {
 		if(message.role != "system") {
 			const prefix = message.role == "user" ? "User: " : "Agent: ";
-			const messageDiv = addMessage(messagesContainer, prefix + message.content)
+			const messageDiv = addMessage(messagesContainer, prefix + texme.render(message.content));
 		}
 	});
+	MathJax.typeset();
 });
 
 function getUserMessage() {
@@ -52,8 +53,10 @@ async function submitPrompt(event) {
 		return;
 	}
 	addMessage(messagesContainer, `User: ${prompt}`);
-	const messageDiv = addMessage(messagesContainer, "Pope is thinking...");
-	messageDiv.innerHTML = await getChatResponse(prompt);
+	const messageDiv = addMessage(messagesContainer, "Agent is thinking...");
+	const response = await getChatResponse(prompt);
+	messageDiv.innerHTML = texme.render(response);
+	MathJax.typeset();
 }
 
 async function logEvent(event, element) {

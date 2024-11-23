@@ -106,7 +106,6 @@ async function addEnhancedMessage(userID, message) {
 		await getEnhancedLogs(userID);
 	}
 	enhancedLogs[userID].history.push(message);
-	console.log(enhancedLogs[userID].history);
 }
 
 async function addEnhancedInteraction(userID, interaction) {
@@ -130,7 +129,6 @@ app.post("/enhanced/chat", async (req, res) => {
 		content: input
 	});
 	const response = await askChatGPT(enhancedLogs[userID].history);
-	console.log(response);
 	addEnhancedMessage(userID, {
 		role: "assistant",
 		content: response
@@ -195,7 +193,7 @@ async function addBaselineInteraction(userID, interaction) {
 	if(!(userID in baselineLogs)) {
 		await getBaselineLogs(userID);
 	}
-	baselineLogs[userID].interactions.push(event);
+	baselineLogs[userID].interactions.push(interaction);
 }
 
 app.post("/baseline/chat", async (req, res) => {
