@@ -1,1 +1,3 @@
+# Pope
 
+Pope is a chatGPT user interface that allows users to click on structured responses (markdown and latex) to automatically extract contents and ask follow up questions. Pope uses human-computer interaction design principles to minimize the gulf of interaction in chat-based AI assistants like chatGPT. Though pope was originally designed with the intent to help students better understand concepts in topics like mathematics - where many follow up questions are often required, the design can also help users execute many other tasks. The current version only supports one template for follow up questions, though I intend to add support for multiple user-constructed templates.
