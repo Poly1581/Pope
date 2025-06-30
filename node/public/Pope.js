@@ -23,7 +23,7 @@ window.addEventListener("load", async () => {
 	});
 	const {history} = await response.json();
 	//Add demo
-	addDemo();
+	//addDemo();
 	history.forEach(message => {
 		if(message.role != "system") {
 			const prefix = message.role == "user" ? "User: " : "Agent: ";

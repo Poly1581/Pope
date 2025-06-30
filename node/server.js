@@ -72,11 +72,11 @@ const app = express();
 
 //Use body parser and public directory
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 
 //Serve homepage
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'chat.html'));
+    res.sendFile(path.join(__dirname, "public", "Pope.html"));
 });
 
 //Listen on env port (default to 3000)
